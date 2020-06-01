@@ -97,18 +97,18 @@ var dots = {
 
         if( d[i].x > dots.el.h1.position().left && d[i].y > (dots.el.h1.position().top) &&  d[i].y < dots.el.h1.position().top + dots.el.h1.height() && d[i].x < dots.el.h1.position().left + dots.el.h1.width()){
           dots.dotsArray[i].color = '#F55151';
-          if(d[i].x < (canvasWidth / 2)){
-            d[i].xMove = '-';
+          // if(d[i].x < (canvasWidth / 2)){
+          //   d[i].xMove = '-';
   
-          } else {
-            d[i].xMove = '+';
-          }
-          if(d[i].y < (canvasHeight / 2)){
-            d[i].yMove = '-';
+          // } else {
+          //   d[i].xMove = '+';
+          // }
+          // if(d[i].y < (canvasHeight / 2)){
+          //   d[i].yMove = '-';
   
-          } else {
-            d[i].yMove = '+';
-          }
+          // } else {
+          //   d[i].yMove = '+';
+          // }
         }
       }
     }
