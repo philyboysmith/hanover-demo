@@ -3,7 +3,7 @@ var dots = {
   dotsArray: [],
   el: {
     context: canvas[0].getContext('2d'),
-    h1: $('.page-2 h1'),
+    h1: $('h1'),
     canvasWidth: window.innerWidth,
     canvasHeight: window.innerHeight, // this one is new
   },
@@ -15,15 +15,60 @@ var dots = {
     speeds: [0.5, 1, 1.5, 2, 2.5],
     stage: 0
   },
+  
   init: function(){
    
+    
     dots.layout();
+    dots.type();
     dots.moveDot();
-    setTimeout(function(){
-      dots.config.stage = 1;
-      $('.page-1').addClass('hidden');
-      $('.page-2').removeClass('hidden');
-    }, 5000);
+    // setTimeout(function(){
+    //   dots.config.stage = 1;
+    //   // $('.page-1').addClass('hidden');
+    //   // $('.page-2').removeClass('hidden');
+    // }, 5000);
+  },
+  type: function() {
+    new TypeIt("h1", {
+      // speed: 75,
+      loop: false,
+      // afterString: async (step, instance) => {
+      //   step.freeze()
+      // } 
+
+    }).type('We live in uncertain times.').pause(5000).delete().type('Disruptive technologies.').exec(
+     function(){
+      return new Promise(resolve => {
+        dots.config.stage = 1;
+
+        setTimeout(() => {
+          resolve();
+        }, 5000);
+      });
+      }  
+    ).delete().type('Shifting trends.').exec(
+      function(){
+       return new Promise(resolve => {
+         dots.config.stage = 2;
+ 
+         setTimeout(() => {
+           resolve();
+         }, 5000);
+       });
+       }  
+     )
+     .delete().type('Political Risks.').exec(
+      function(){
+       return new Promise(resolve => {
+         dots.config.stage = 3;
+ 
+         setTimeout(() => {
+           resolve();
+         }, 5000);
+       });
+       }  
+     )
+     .go();
   },
   shrinkBox: function(){
     var i = 0;
@@ -52,35 +97,61 @@ var dots = {
 
       var random = Math.floor(Math.random() * Math.floor(500));
 
-      if(random == 1){
-        d[i].xMove = '-';
-      }
-      if(random == 2){
-        d[i].xMove = '+';
-      }
-      if(random == 3){
-        d[i].yMove = '-';
-      }
-      if(random == 4){
-        d[i].yMove = '+';
+      if (dots.config.stage == 0){
+
+        if(random == 1){
+          d[i].xMove = '-';
+        }
+        if(random == 2){
+          d[i].xMove = '+';
+        }
+        if(random == 3){
+          d[i].yMove = '-';
+        }
+        if(random == 4){
+          d[i].yMove = '+';
+        }
       }
 
 
       if( d[i].xMove == '+' ) {
-        d[i].x += d[i].xspeed;
+        d[i].x += d[i].speed;
       } else {
-        d[i].x -= d[i].xspeed;
+        d[i].x -= d[i].speed;
       }
       if( d[i].yMove == '+' ) {
-        d[i].y += d[i].yspeed;
+        d[i].y += d[i].speed;
       } else {
-        d[i].y -= d[i].yspeed;
+        d[i].y -= d[i].speed;
       }
       
       
   
       dots.drawDot(d[i]);
   
+      
+      if (dots.config.stage == 1){
+
+        if( d[i].x > dots.el.h1.position().left && d[i].y > (dots.el.h1.position().top) &&  d[i].y < dots.el.h1.position().top + dots.el.h1.height() && d[i].x < dots.el.h1.position().left + dots.el.h1.width()){
+
+          dots.dotsArray[i].color = '#F55151';
+        
+        }
+      }
+
+      if (dots.config.stage == 2){
+        d[i].color = 'rgba(255,255,255,0.4)';
+        if( (d[i].y + d[i].radius) < canvasHeight /2) {
+          d[i].yMove = '+';
+        }
+
+      }
+
+      
+      if (dots.config.stage == 3){
+        d[i].speed = Math.cos(i) * 2;
+      }
+
       if( (d[i].x + d[i].radius) >= canvasWidth ) {
         d[i].xMove = '-';
       }
@@ -93,24 +164,27 @@ var dots = {
       if( (d[i].y - d[i].radius) <= 0 ) {
         d[i].yMove = '+';
       }
-      if (dots.config.stage == 1){
+        // var center = [canvasWidth / 2, canvasHeight / 2];
+        // var xDist = center[0] - d[i].x;
+        // var yDist = center[1] - d[i].y;
+        // var distance = Math.sqrt((xDist * xDist) + (yDist * yDist));
+        // // console.log(distance);
+        // if(distance > 400){
+        //   // d[i].color = 'red';
+        //   if(xDist > 0){
+        //     d[i].color = 'red';
+        //       d[i].xMove = '-';
+        //   // } else {
+        //   //   d[i].color = 'blue';
+        //   //   d[i].xMove = '+';
+        //   }
+        // //   d[i].xMove = '-';
+        // } else {
+        //   d[i].color = 'white';
 
-        if( d[i].x > dots.el.h1.position().left && d[i].y > (dots.el.h1.position().top) &&  d[i].y < dots.el.h1.position().top + dots.el.h1.height() && d[i].x < dots.el.h1.position().left + dots.el.h1.width()){
-          dots.dotsArray[i].color = '#F55151';
-          // if(d[i].x < (canvasWidth / 2)){
-          //   d[i].xMove = '-';
-  
-          // } else {
-          //   d[i].xMove = '+';
-          // }
-          // if(d[i].y < (canvasHeight / 2)){
-          //   d[i].yMove = '-';
-  
-          // } else {
-          //   d[i].yMove = '+';
-          // }
-        }
-      }
+        // }
+
+      // }
     }
   
     window.requestAnimationFrame(dots.moveDot);
@@ -133,8 +207,7 @@ var dots = {
         xMove: xMove,
         yMove: yMove,
         color: 'rgba(255,255,255,0.4)',
-        xspeed: dots.config.speeds[Math.floor(Math.random() * dots.config.speeds.length)],
-        yspeed: dots.config.speeds[Math.floor(Math.random() * dots.config.speeds.length)]
+        speed: Math.sin(i) * 2,
       };
       // Save it to the dots array.
       dots.dotsArray.push(dot);
