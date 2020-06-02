@@ -1,3 +1,8 @@
+const isPrime = num => {
+  for (var i = 2; i < num; i++) if (num % i == 0) return false;
+  return num >= 2; 
+};
+
 var canvas = $('canvas.dots');
 var dots = {
   dotsArray: [],
@@ -10,7 +15,7 @@ var dots = {
   config : {
     
     dotSize: 5,
-    numOfDots:  200,
+    numOfDots:  400,
     directions: ['+', '-'],
     speeds: [0.5, 1, 1.5, 2, 2.5],
     stage: 0
@@ -29,21 +34,32 @@ var dots = {
     // }, 5000);
   },
   type: function() {
+    dots.config.stage = 0;
     new TypeIt("h1", {
       // speed: 75,
-      loop: false,
+      loop: true,
       // afterString: async (step, instance) => {
       //   step.freeze()
       // } 
 
-    }).type('We live in uncertain times.').pause(5000).delete().type('Disruptive technologies.').exec(
+    }).type('We live in uncertain times.').exec(
+      function(){
+       return new Promise(resolve => {
+         dots.config.stage = 0;
+ 
+         setTimeout(() => {
+           resolve();
+         }, 3000);
+       });
+       }  
+     ).delete().type('Disruptive technologies.').exec(
      function(){
       return new Promise(resolve => {
         dots.config.stage = 1;
 
         setTimeout(() => {
           resolve();
-        }, 5000);
+        }, 3000);
       });
       }  
     ).delete().type('Shifting trends.').exec(
@@ -53,7 +69,7 @@ var dots = {
  
          setTimeout(() => {
            resolve();
-         }, 5000);
+         }, 1000);
        });
        }  
      )
@@ -128,6 +144,8 @@ var dots = {
       
   
       dots.drawDot(d[i]);
+
+      
   
       
       if (dots.config.stage == 1){
@@ -140,17 +158,45 @@ var dots = {
       }
 
       if (dots.config.stage == 2){
-        d[i].color = 'rgba(255,255,255,0.4)';
-        if( (d[i].y + d[i].radius) < canvasHeight /2) {
+        d[i].color = 'rgb(255,255,255)';
+        // if( (d[i].y + d[i].radius) < canvasHeight /2) {
           d[i].yMove = '+';
-        }
+        // }
 
       }
+      // var center = [canvasWidth / 2, canvasHeight / 2];
+      //   if(Math.floor(d[i].x) == Math.floor(center[0])){
+      //     if(d[i].xMove == '+'){
+
+      //       d[i].xMove = '-';
+      //     }  else {
+      //       d[i].xMove = '+';
+      //     }       
+
+      //   }
+        
+
+
+
+      // // if (dots.config.stage == 3){
+      //   var center = [canvasWidth / 2, canvasHeight / 2];
+
+      //   if(d[i].x  center[0])
+      //   {
+      //     d[i].color == 'red';
+      //     d[i].xMove = '-';
+      //   } else if(d[i].x == center[0] && d[i].xMove == '-' )
+      //   {
+      //     d[i].xMove = '+';
+      //   }
+        // d[i].speed =Math.sin(i) / 4;
+
+        // if(isPrime(i) && i < 30){
+        //   // dots.drawLine([d[i], d[i + 1]]);
+        // }
+    // }
 
       
-      if (dots.config.stage == 3){
-        d[i].speed = Math.cos(i) * 2;
-      }
 
       if( (d[i].x + d[i].radius) >= canvasWidth ) {
         d[i].xMove = '-';
@@ -203,10 +249,10 @@ var dots = {
       var dot = {
         x: x,
         y: y,
-        radius: Math.floor(Math.random() * 4),
+        radius: Math.floor(Math.random() * 5),
         xMove: xMove,
         yMove: yMove,
-        color: 'rgba(255,255,255,0.4)',
+        color: 'rgb(255,255,255)',
         speed: Math.sin(i) * 2,
       };
       // Save it to the dots array.
@@ -215,9 +261,16 @@ var dots = {
       dots.drawDot(dot);
     }
   },
+  drawLine: function(duplet){
+        dots.el.context.strokeStyle = '(255,255,2.2)';
+        dots.el.context.beginPath();
+        dots.el.context.moveTo(duplet[0].x, duplet[0].y);
+        dots.el.context.lineTo(duplet[1].x, duplet[1].y);
+        dots.el.context.stroke();
+  },
   drawDot: function(dot) {
     //     // Set transparency on the dots.
-        dots.el.context.globalAlpha = 0.9;
+        dots.el.context.globalAlpha = 0.7;
         dots.el.context.beginPath();
         dots.el.context.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI, false);
         dots.el.context.fillStyle = dot.color;
